@@ -5,41 +5,38 @@ const styles = StyleSheet.create({
     padding: 30,
     fontSize: 12,
     fontFamily: "Helvetica",
-    lineHeight: 1.3, // Tightened line height
+    lineHeight: 1.3,
     color: "#000",
   },
-  section: {
-    marginBottom: 4, // Minimal bottom margin
-  },
+  section: { marginBottom: 4 },
   heading: {
     fontSize: 14,
-    marginBottom: 2, // Reduced heading margin
+    marginBottom: 2,
     fontWeight: "bold",
     borderBottom: "1 solid #000",
     paddingBottom: 1,
   },
-  subheading: {
-    fontSize: 12,
-    fontWeight: "bold",
-    marginBottom: 1, // Tight subheading spacing
-  },
+  subheading: { fontSize: 12, fontWeight: "bold", marginBottom: 1 },
   italic: { fontStyle: "italic" },
-  bullet: {
-    marginLeft: 8,
-    marginBottom: 1, // Minimal bullet spacing
-  },
-  tightSection: {
-    marginBottom: 0, // For sections where we want no extra space
-  },
-  contactSection: {
-    marginBottom: 6, // Slightly more space after contact info
-  },
+  bullet: { marginLeft: 8, marginBottom: 1 },
+  tightSection: { marginBottom: 0 },
+  contactSection: { marginBottom: 6 },
 });
 
-const safeText = (value) =>
-  typeof value === "string" || typeof value === "number" ? String(value) : "";
+const isNonEmptyText = (val) =>
+  typeof val === "string" && val.trim().length > 0;
 
 export default function ResumePDF({ data }) {
+  if (!data || typeof data !== "object") {
+    return (
+      <Document>
+        <Page size="A4" style={styles.page}>
+          <Text>Invalid resume data</Text>
+        </Page>
+      </Document>
+    );
+  }
+
   const sections = {
     summary: false,
     education: false,
@@ -58,31 +55,32 @@ export default function ResumePDF({ data }) {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        {/* Contact - Slightly more space after this section */}
+        {/* Contact */}
         <View style={[styles.section, styles.contactSection]}>
-          {safeText(contact.name) && (
-            <Text style={styles.subheading}>{safeText(contact.name)}</Text>
+          {isNonEmptyText(contact.name) && (
+            <Text style={styles.subheading}>{contact.name.trim()}</Text>
           )}
-          {[contact.email, contact.phone].filter(Boolean).length > 0 && (
+          {(isNonEmptyText(contact.email) || isNonEmptyText(contact.phone)) && (
             <Text>
-              {[safeText(contact.email), safeText(contact.phone)]
-                .filter(Boolean)
+              {[contact.email, contact.phone]
+                .filter(isNonEmptyText)
+                .map((val) => val.trim())
                 .join(" | ")}
             </Text>
           )}
-          {safeText(contact.linkedin) && (
-            <Text>{safeText(contact.linkedin)}</Text>
+          {isNonEmptyText(contact.linkedin) && (
+            <Text>{contact.linkedin.trim()}</Text>
           )}
-          {safeText(contact.portfolio) && (
-            <Text>{safeText(contact.portfolio)}</Text>
+          {isNonEmptyText(contact.portfolio) && (
+            <Text>{contact.portfolio.trim()}</Text>
           )}
         </View>
 
         {/* Summary */}
-        {sections.summary && safeText(data.summary) && (
+        {sections.summary && isNonEmptyText(data.summary) && (
           <View style={styles.section}>
             <Text style={styles.heading}>Summary</Text>
-            <Text>{safeText(data.summary)}</Text>
+            <Text>{data.summary.trim()}</Text>
           </View>
         )}
 
@@ -94,15 +92,14 @@ export default function ResumePDF({ data }) {
               <Text style={styles.heading}>Education</Text>
               {data.education.map((edu, idx) => (
                 <View key={idx} style={styles.tightSection}>
-                  {safeText(edu.school) && (
-                    <Text style={styles.subheading}>
-                      {safeText(edu.school)}
-                    </Text>
+                  {isNonEmptyText(edu.school) && (
+                    <Text style={styles.subheading}>{edu.school.trim()}</Text>
                   )}
-                  {[edu.degree, edu.year].filter(Boolean).length > 0 && (
+                  {[edu.degree, edu.year].filter(isNonEmptyText).length > 0 && (
                     <Text>
-                      {[safeText(edu.degree), safeText(edu.year)]
-                        .filter(Boolean)
+                      {[edu.degree, edu.year]
+                        .filter(isNonEmptyText)
+                        .map((val) => val.trim())
                         .join(" · ")}
                     </Text>
                   )}
@@ -111,14 +108,12 @@ export default function ResumePDF({ data }) {
             </View>
           )}
 
-        {/* Experience - Critical section for spacing */}
+        {/* Experience */}
         {sections.experience &&
           Array.isArray(data.experience) &&
           data.experience.length > 0 && (
-            <View style={styles.tightSection}>
-              <Text style={[styles.heading, { marginBottom: 1 }]}>
-                Experience
-              </Text>
+            <View style={styles.section}>
+              <Text style={styles.heading}>Experience</Text>
               {data.experience.map((exp, idx) => (
                 <View
                   key={idx}
@@ -127,21 +122,21 @@ export default function ResumePDF({ data }) {
                     idx < data.experience.length - 1 ? { marginBottom: 2 } : {},
                   ]}
                 >
-                  {safeText(exp.company) && (
-                    <Text style={styles.subheading}>
-                      {safeText(exp.company)}
-                    </Text>
+                  {isNonEmptyText(exp.company) && (
+                    <Text style={styles.subheading}>{exp.company.trim()}</Text>
                   )}
-                  {[exp.role, exp.duration].filter(Boolean).length > 0 && (
+                  {[exp.role, exp.duration].filter(isNonEmptyText).length >
+                    0 && (
                     <Text>
-                      {[safeText(exp.role), safeText(exp.duration)]
-                        .filter(Boolean)
+                      {[exp.role, exp.duration]
+                        .filter(isNonEmptyText)
+                        .map((val) => val.trim())
                         .join(" · ")}
                     </Text>
                   )}
-                  {safeText(exp.description) && (
+                  {isNonEmptyText(exp.description) && (
                     <Text style={styles.bullet}>
-                      • {safeText(exp.description)}
+                      • {exp.description.trim()}
                     </Text>
                   )}
                 </View>
@@ -149,13 +144,18 @@ export default function ResumePDF({ data }) {
             </View>
           )}
 
-        {/* Skills - Right after Experience with minimal gap */}
+        {/* Skills */}
         {sections.skills &&
           Array.isArray(data.skills) &&
-          data.skills.length > 0 && (
-            <View style={[styles.section, { marginTop: 1 }]}>
+          data.skills.some(isNonEmptyText) && (
+            <View style={styles.section}>
               <Text style={styles.heading}>Skills</Text>
-              <Text>{data.skills.map(safeText).join(", ")}</Text>
+              <Text>
+                {data.skills
+                  .filter(isNonEmptyText)
+                  .map((val) => val.trim())
+                  .join(", ")}
+              </Text>
             </View>
           )}
 
@@ -173,18 +173,16 @@ export default function ResumePDF({ data }) {
                     idx < data.projects.length - 1 ? { marginBottom: 2 } : {},
                   ]}
                 >
-                  {safeText(proj.title) && (
-                    <Text style={styles.subheading}>
-                      {safeText(proj.title)}
-                    </Text>
+                  {isNonEmptyText(proj.title) && (
+                    <Text style={styles.subheading}>{proj.title.trim()}</Text>
                   )}
-                  {safeText(proj.description) && (
+                  {isNonEmptyText(proj.description) && (
                     <Text style={styles.bullet}>
-                      • {safeText(proj.description)}
+                      • {proj.description.trim()}
                     </Text>
                   )}
-                  {safeText(proj.link) && (
-                    <Text style={styles.italic}>{safeText(proj.link)}</Text>
+                  {isNonEmptyText(proj.link) && (
+                    <Text style={styles.italic}>{proj.link.trim()}</Text>
                   )}
                 </View>
               ))}
@@ -199,15 +197,15 @@ export default function ResumePDF({ data }) {
               <Text style={styles.heading}>Certificates</Text>
               {data.certificates.map((cert, idx) => (
                 <View key={idx} style={styles.tightSection}>
-                  {safeText(cert.title) && (
-                    <Text style={styles.subheading}>
-                      {safeText(cert.title)}
-                    </Text>
+                  {isNonEmptyText(cert.title) && (
+                    <Text style={styles.subheading}>{cert.title.trim()}</Text>
                   )}
-                  {[cert.issuer, cert.year].filter(Boolean).length > 0 && (
+                  {[cert.issuer, cert.year].filter(isNonEmptyText).length >
+                    0 && (
                     <Text>
-                      {[safeText(cert.issuer), safeText(cert.year)]
-                        .filter(Boolean)
+                      {[cert.issuer, cert.year]
+                        .filter(isNonEmptyText)
+                        .map((val) => val.trim())
                         .join(" · ")}
                     </Text>
                   )}
@@ -217,17 +215,20 @@ export default function ResumePDF({ data }) {
           )}
 
         {/* Custom Sections */}
-        {customSections.map((section, idx) => (
-          <View key={idx} style={styles.section}>
-            <Text style={styles.heading}>{safeText(section.title)}</Text>
-            {Array.isArray(section.items) &&
-              section.items.map((item, i) => (
-                <Text key={i} style={styles.bullet}>
-                  • {safeText(item)}
-                </Text>
-              ))}
-          </View>
-        ))}
+        {Array.isArray(customSections) &&
+          customSections.map((section, idx) => (
+            <View key={idx} style={styles.section}>
+              {isNonEmptyText(section.title) && (
+                <Text style={styles.heading}>{section.title.trim()}</Text>
+              )}
+              {Array.isArray(section.items) &&
+                section.items.filter(isNonEmptyText).map((item, i) => (
+                  <Text key={i} style={styles.bullet}>
+                    • {item.trim()}
+                  </Text>
+                ))}
+            </View>
+          ))}
       </Page>
     </Document>
   );

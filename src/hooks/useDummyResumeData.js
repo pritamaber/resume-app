@@ -85,5 +85,20 @@ export const useDummyResumeData = () => {
         year: "2022",
       },
     ]);
+
+    // ✅ Add custom sections here
+    updateSection("customSections", [
+      {
+        title: "Languages",
+        items: ["English (Fluent)", "Hindi (Native)", "Spanish (Basic)"],
+      },
+      {
+        title: "Volunteering",
+        items: [
+          "Mentor at CodeForIndia Bootcamp 2023",
+          "Organized Hackathon for IIT Bombay TechFest",
+        ],
+      },
+    ]);
   }, []);
 };
