@@ -95,8 +95,23 @@ export const useDummyResumeData = () => {
       {
         title: "Volunteering",
         items: [
-          "Mentor at CodeForIndia Bootcamp 2023",
-          "Organized Hackathon for IIT Bombay TechFest",
+          "Mentored 30+ students in JavaScript at CodeForIndia Bootcamp 2023",
+          "Organized a 24-hour AI Hackathon during IIT Bombay TechFest",
+        ],
+      },
+      {
+        title: "Achievements",
+        items: [
+          "Top 5 finalist in Google Solution Challenge 2023",
+          "Winner of TCS CodeVita 2022 (National level)",
+        ],
+      },
+      {
+        title: "Interests",
+        items: [
+          "Open Source Contributions",
+          "UI/UX Design",
+          "Chess (District Level Player)",
         ],
       },
     ]);
