@@ -7,6 +7,7 @@ export default function StepIndicator({ currentStep, setStep }) {
     "Skills",
     "Projects",
     "Certificates",
+    "Custom Fields",
     "Review",
   ];
 

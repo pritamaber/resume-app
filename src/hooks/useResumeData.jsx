@@ -20,7 +20,7 @@ export const ResumeProvider = ({ children }) => {
     skills: [],
     projects: [],
     certificates: [],
-    customSections: [], // ✅ added here
+    customSections: [],
     sections: {
       summary: true,
       education: true,
@@ -38,8 +38,42 @@ export const ResumeProvider = ({ children }) => {
     }));
   };
 
+  // ✅ Add custom section
+  const addCustomSection = (section) => {
+    setResumeData((prev) => ({
+      ...prev,
+      customSections: [...prev.customSections, section],
+    }));
+  };
+
+  // ✅ Update a custom section by index
+  const updateCustomSection = (index, updatedSection) => {
+    setResumeData((prev) => {
+      const updated = [...prev.customSections];
+      updated[index] = updatedSection;
+      return { ...prev, customSections: updated };
+    });
+  };
+
+  // ✅ Delete a custom section
+  const deleteCustomSection = (index) => {
+    setResumeData((prev) => ({
+      ...prev,
+      customSections: prev.customSections.filter((_, i) => i !== index),
+    }));
+  };
+
   return (
-    <ResumeContext.Provider value={{ resumeData, updateSection }}>
+    <ResumeContext.Provider
+      value={{
+        resumeData,
+        setResumeData,
+        updateSection,
+        addCustomSection,
+        updateCustomSection,
+        deleteCustomSection,
+      }}
+    >
       {children}
     </ResumeContext.Provider>
   );

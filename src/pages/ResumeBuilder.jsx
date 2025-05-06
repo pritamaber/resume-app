@@ -9,6 +9,7 @@ import ProjectsStep from "../components/steps/ProjectsStep";
 import CertificatesStep from "../components/steps/CertificatesStep";
 import ReviewStep from "../components/steps/ReviewStep";
 import SectionSelector from "../components/common/SectionSelector";
+import CustomSectionsStep from "../components/steps/CustomSectionsStep";
 
 import { useDummyResumeData } from "../hooks/useDummyResumeData";
 
@@ -25,6 +26,7 @@ export default function ResumeBuilder() {
     { component: <SkillsStep />, title: "Skills" },
     { component: <ProjectsStep />, title: "Projects" },
     { component: <CertificatesStep />, title: "Certificates" },
+    { component: <CustomSectionsStep />, title: "Custom Sections" }, // ✅ new step
     { component: <ReviewStep />, title: "Review" },
   ];
 

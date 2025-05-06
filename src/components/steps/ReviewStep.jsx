@@ -150,19 +150,22 @@ export default function ReviewStep() {
             </section>
           )}
 
-        {Array.isArray(resumeData.customSections) &&
-          resumeData.customSections.map((section, idx) => (
-            <section key={idx}>
-              <h2 className="text-lg font-semibold border-b pb-1 mb-1">
-                {section.title}
-              </h2>
-              <ul className="list-disc pl-5 space-y-1">
+        {resumeData.customSections?.length > 0 && (
+          <section className="mt-4">
+            {resumeData.customSections.map((section, sIdx) => (
+              <div key={sIdx} className="mb-2">
+                <h2 className="text-lg font-semibold border-b pb-1 mb-1">
+                  {section.title}
+                </h2>
                 {section.items.map((item, i) => (
-                  <li key={i}>{item}</li>
+                  <p key={i} className="text-sm">
+                    • {item}
+                  </p>
                 ))}
-              </ul>
-            </section>
-          ))}
+              </div>
+            ))}
+          </section>
+        )}
       </div>
     </div>
   );
