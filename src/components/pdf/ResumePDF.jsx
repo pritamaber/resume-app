@@ -1,3 +1,4 @@
+import React from "react";
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 
 const styles = StyleSheet.create({
@@ -19,12 +20,35 @@ const styles = StyleSheet.create({
   subheading: { fontSize: 12, fontWeight: "bold", marginBottom: 1 },
   italic: { fontStyle: "italic" },
   bullet: { marginLeft: 8, marginBottom: 1 },
+  bold: { fontWeight: "bold" },
   tightSection: { marginBottom: 0 },
   contactSection: { marginBottom: 6 },
 });
 
 const isNonEmptyText = (val) =>
   typeof val === "string" && val.trim().length > 0;
+
+// Utility to parse <strong> tags into text segments for bold styling
+const parseHTMLString = (htmlString) => {
+  const segments = [];
+  let lastIndex = 0;
+  const tagRegex = /<strong[^>]*>(.*?)<\/strong>/g;
+  let match;
+  while ((match = tagRegex.exec(htmlString)) !== null) {
+    if (match.index > lastIndex) {
+      segments.push({
+        text: htmlString.slice(lastIndex, match.index),
+        bold: false,
+      });
+    }
+    segments.push({ text: match[1], bold: true });
+    lastIndex = match.index + match[0].length;
+  }
+  if (lastIndex < htmlString.length) {
+    segments.push({ text: htmlString.slice(lastIndex), bold: false });
+  }
+  return segments;
+};
 
 export default function ResumePDF({ data }) {
   if (!data || typeof data !== "object") {
@@ -178,7 +202,15 @@ export default function ResumePDF({ data }) {
                   )}
                   {isNonEmptyText(proj.description) && (
                     <Text style={styles.bullet}>
-                      • {proj.description.trim()}
+                      •{" "}
+                      {parseHTMLString(proj.description).map((part, i) => (
+                        <Text
+                          key={i}
+                          style={part.bold ? styles.bold : undefined}
+                        >
+                          {part.text}
+                        </Text>
+                      ))}
                     </Text>
                   )}
                   {isNonEmptyText(proj.link) && (

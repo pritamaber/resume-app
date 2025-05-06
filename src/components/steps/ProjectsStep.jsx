@@ -1,7 +1,9 @@
 import { useResumeData } from "../../hooks/useResumeData";
+import { useState } from "react";
 
 export default function ProjectsStep() {
   const { resumeData, updateSection } = useResumeData();
+  const [loadingIndex, setLoadingIndex] = useState(null);
 
   const handleChange = (index, field, value) => {
     const updated = [...resumeData.projects];
@@ -32,11 +34,12 @@ export default function ProjectsStep() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ type: "project", input: project.description }),
       });
+      if (!res.ok) throw new Error("Network response was not ok");
       const { output } = await res.json();
       handleChange(index, "description", output);
     } catch (err) {
       console.error("Polish error", err);
-      // You may show a toast notification here
+      // Optionally show a toast notification here
     } finally {
       setLoadingIndex(null);
     }
@@ -68,14 +71,20 @@ export default function ProjectsStep() {
                 handleChange(index, "description", e.target.value)
               }
               className="w-full border border-gray-300 rounded p-2 pr-10"
+              disabled={loadingIndex === index}
             />
             <button
               type="button"
               onClick={() => handlePolishClick(index)}
-              className="absolute right-2 top-2 text-yellow-500 hover:text-yellow-600"
+              disabled={loadingIndex === index}
+              className={`absolute right-2 top-2 text-2xl leading-none focus:outline-none transition ${
+                loadingIndex === index
+                  ? "text-gray-400"
+                  : "text-yellow-500 hover:text-yellow-600"
+              }`}
               title="Polish description with AI"
             >
-              💡
+              {loadingIndex === index ? "…" : "💡"}
             </button>
           </div>
 
