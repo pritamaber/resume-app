@@ -1,10 +1,41 @@
 import { useResumeData } from "../../hooks/useResumeData";
+import { useState } from "react";
 
 export default function SummaryStep() {
   const { resumeData, updateSection } = useResumeData();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleChange = (e) => {
     updateSection("summary", e.target.value);
+  };
+
+  const handleAISuggestion = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const res = await fetch("/api/ai-enhancer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "summary",
+          input: resumeData.summary,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.output) {
+        updateSection("summary", data.output);
+      } else {
+        setError(data.error || "Failed to get AI suggestion.");
+      }
+    } catch (err) {
+      setError("Something went wrong while fetching AI suggestion.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -21,9 +52,16 @@ export default function SummaryStep() {
         className="w-full border border-gray-300 rounded-lg p-3 focus:border-indigo-500 focus:ring-indigo-500 transition"
       />
 
-      {/* Placeholder for AI suggestions */}
-      <div className="mt-2 text-sm text-gray-500">
-        💡 Coming soon: AI suggestions for your summary!
+      <div className="flex items-center gap-3 mt-2">
+        <button
+          onClick={handleAISuggestion}
+          disabled={loading}
+          className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition"
+        >
+          {loading ? "Thinking..." : "💡 Enhance with AI"}
+        </button>
+
+        {error && <p className="text-red-500 text-sm">{error}</p>}
       </div>
     </div>
   );
