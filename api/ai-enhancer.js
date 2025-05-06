@@ -21,7 +21,9 @@ export default async function handler(req, res) {
       break;
 
     case "experience":
-      prompt = `Rewrite the following work experience bullet point to be more impactful, using action verbs and measurable outcomes. Keep it one to two lines max:\n\n${input.trim()}`;
+      prompt = `Rewrite the following work experience bullet point to be more impactful, using action verbs and measurable outcomes.
+      Wrap important technologies, results, or metrics in **bold** markdown formatting.
+       Keep it one to two lines max:\n\n${input.trim()}`;
       break;
 
     case "project":

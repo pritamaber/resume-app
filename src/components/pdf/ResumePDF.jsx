@@ -173,9 +173,18 @@ export default function ResumePDF({ data }) {
                         .join(" · ")}
                     </Text>
                   )}
+                  +{" "}
                   {isNonEmptyText(exp.description) && (
                     <Text style={styles.bullet}>
-                      • {exp.description.trim()}
+                      •{" "}
+                      {parseHTMLString(exp.description).map((part, i) => (
+                        <Text
+                          key={i}
+                          style={part.bold ? styles.bold : undefined}
+                        >
+                          {part.text}
+                        </Text>
+                      ))}
                     </Text>
                   )}
                 </View>
