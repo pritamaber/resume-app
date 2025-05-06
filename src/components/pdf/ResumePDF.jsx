@@ -8,13 +8,16 @@ const styles = StyleSheet.create({
     lineHeight: 1.75,
     color: "#000",
   },
-  section: { marginBottom: 16 },
+  section: {
+    marginBottom: 16,
+  },
   heading: {
     fontSize: 14,
     marginBottom: 4,
     fontWeight: "bold",
     borderBottom: "1 solid #000",
     paddingBottom: 2,
+    wrap: false,
   },
   subheading: { fontSize: 12, fontWeight: "bold" },
   italic: { fontStyle: "italic" },
@@ -34,6 +37,10 @@ export default function ResumePDF({ data }) {
             {data.contact.email} | {data.contact.phone}
           </Text>
           <Text>{data.contact.linkedin}</Text>
+          {data.contact.portfolio && <Text>{data.contact.portfolio}</Text>}
+          {data.contact.github && <Text>{data.contact.github}</Text>}
+          {data.contact.location && <Text>{data.contact.location}</Text>}
+          {data.contact.twitter && <Text>{data.contact.twitter}</Text>}
         </View>
 
         {/* Summary */}
@@ -46,7 +53,7 @@ export default function ResumePDF({ data }) {
 
         {/* Education */}
         {data.education?.length > 0 && (
-          <View style={styles.section}>
+          <View style={styles.section} wrap={false}>
             <Text style={styles.heading}>Education</Text>
             {data.education.map((edu, idx) => (
               <View key={idx}>
@@ -62,7 +69,7 @@ export default function ResumePDF({ data }) {
 
         {/* Experience */}
         {data.experience?.length > 0 && (
-          <View style={styles.section}>
+          <View style={styles.section} wrap={false}>
             <Text style={styles.heading}>Experience</Text>
             {data.experience.map((exp, idx) => (
               <View key={idx}>
@@ -77,9 +84,12 @@ export default function ResumePDF({ data }) {
           </View>
         )}
 
+        {/* Insert break only if needed */}
+        <View break />
+
         {/* Skills */}
         {data.skills?.length > 0 && (
-          <View style={styles.section}>
+          <View style={styles.section} wrap={false}>
             <Text style={styles.heading}>Skills</Text>
             <Text>{data.skills.join(", ")}</Text>
           </View>
@@ -87,7 +97,7 @@ export default function ResumePDF({ data }) {
 
         {/* Projects */}
         {data.projects?.length > 0 && (
-          <View style={styles.section}>
+          <View style={styles.section} wrap={false}>
             <Text style={styles.heading}>Projects</Text>
             {data.projects.map((proj, idx) => (
               <View key={idx}>
@@ -101,7 +111,7 @@ export default function ResumePDF({ data }) {
 
         {/* Certificates */}
         {data.certificates?.length > 0 && (
-          <View style={styles.section}>
+          <View style={styles.section} wrap={false}>
             <Text style={styles.heading}>Certificates</Text>
             {data.certificates.map((cert, idx) => (
               <View key={idx}>

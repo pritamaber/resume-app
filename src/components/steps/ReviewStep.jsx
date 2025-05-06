@@ -25,7 +25,13 @@ export default function ReviewStep() {
           <p>
             {resumeData.contact.email} | {resumeData.contact.phone}
           </p>
-          <p>{resumeData.contact.linkedin}</p>
+          {resumeData.contact.linkedin && <p>{resumeData.contact.linkedin}</p>}
+          {resumeData.contact.portfolio && (
+            <p> {resumeData.contact.portfolio}</p>
+          )}
+          {resumeData.contact.github && <p> {resumeData.contact.github}</p>}
+          {resumeData.contact.location && <p> {resumeData.contact.location}</p>}
+          {resumeData.contact.twitter && <p> {resumeData.contact.twitter}</p>}
         </section>
 
         {resumeData.summary && (

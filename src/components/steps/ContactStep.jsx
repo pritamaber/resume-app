@@ -44,6 +44,34 @@ export default function ContactStep() {
           placeholder="LinkedIn URL"
           className="border p-2 rounded"
         />
+        <input
+          name="portfolio"
+          value={resumeData.contact.portfolio || ""}
+          onChange={handleChange}
+          placeholder="Portfolio URL (optional)"
+          className="border p-2 rounded"
+        />
+        <input
+          name="github"
+          value={resumeData.contact.github || ""}
+          onChange={handleChange}
+          placeholder="GitHub URL (optional)"
+          className="border p-2 rounded"
+        />
+        <input
+          name="location"
+          value={resumeData.contact.location || ""}
+          onChange={handleChange}
+          placeholder="Location (optional)"
+          className="border p-2 rounded"
+        />
+        <input
+          name="twitter"
+          value={resumeData.contact.twitter || ""}
+          onChange={handleChange}
+          placeholder="Twitter URL (optional)"
+          className="border p-2 rounded"
+        />
       </div>
     </div>
   );
