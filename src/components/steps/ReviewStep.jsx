@@ -1,44 +1,25 @@
-import { useRef } from "react";
-// import html2canvas from "html2canvas";
-import html2canvas from "html2canvas-pro";
-import jsPDF from "jspdf";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 import { useResumeData } from "../../hooks/useResumeData";
+import ResumePDF from "../pdf/ResumePDF"; // ✅ adjust path if needed
 
 export default function ReviewStep() {
   const { resumeData } = useResumeData();
-  const pdfRef = useRef();
-
-  const downloadPDF = async () => {
-    const canvas = await html2canvas(pdfRef.current, {
-      scale: 2,
-      useCORS: true,
-    });
-    const imgData = canvas.toDataURL("image/png");
-
-    const pdf = new jsPDF("p", "pt", "a4");
-    const imgProps = pdf.getImageProperties(imgData);
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-    pdf.save("resume.pdf");
-  };
 
   return (
     <div className="max-w-4xl mx-auto my-10 px-4">
       <div className="mb-4 text-right">
-        <button
-          onClick={downloadPDF}
+        <PDFDownloadLink
+          document={<ResumePDF data={resumeData} />}
+          fileName="resume.pdf"
           className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition"
         >
-          📄 Download Resume (PDF)
-        </button>
+          {({ loading }) =>
+            loading ? "Generating PDF..." : "📄 Download ATS-Friendly Resume"
+          }
+        </PDFDownloadLink>
       </div>
 
-      <div
-        ref={pdfRef}
-        className="bg-white p-6 shadow-lg text-[13px] leading-tight space-y-4 font-sans"
-      >
+      <div className="bg-white p-6 shadow-lg text-[13px] leading-tight space-y-4 font-sans">
         <section>
           <h1 className="text-2xl font-bold">{resumeData.contact.name}</h1>
           <p>
