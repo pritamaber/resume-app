@@ -5,21 +5,35 @@ const styles = StyleSheet.create({
     padding: 30,
     fontSize: 12,
     fontFamily: "Helvetica",
-    lineHeight: 1.75,
+    lineHeight: 1.3, // Tightened line height
     color: "#000",
   },
-  section: { marginBottom: 16 },
+  section: {
+    marginBottom: 4, // Minimal bottom margin
+  },
   heading: {
     fontSize: 14,
-    marginBottom: 4,
+    marginBottom: 2, // Reduced heading margin
     fontWeight: "bold",
     borderBottom: "1 solid #000",
-    paddingBottom: 2,
-    wrap: false,
+    paddingBottom: 1,
   },
-  subheading: { fontSize: 12, fontWeight: "bold" },
+  subheading: {
+    fontSize: 12,
+    fontWeight: "bold",
+    marginBottom: 1, // Tight subheading spacing
+  },
   italic: { fontStyle: "italic" },
-  bullet: { marginLeft: 10, marginBottom: 2 },
+  bullet: {
+    marginLeft: 8,
+    marginBottom: 1, // Minimal bullet spacing
+  },
+  tightSection: {
+    marginBottom: 0, // For sections where we want no extra space
+  },
+  contactSection: {
+    marginBottom: 6, // Slightly more space after contact info
+  },
 });
 
 const safeText = (value) =>
@@ -44,8 +58,8 @@ export default function ResumePDF({ data }) {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        {/* Contact */}
-        <View style={styles.section}>
+        {/* Contact - Slightly more space after this section */}
+        <View style={[styles.section, styles.contactSection]}>
           {safeText(contact.name) && (
             <Text style={styles.subheading}>{safeText(contact.name)}</Text>
           )}
@@ -62,13 +76,6 @@ export default function ResumePDF({ data }) {
           {safeText(contact.portfolio) && (
             <Text>{safeText(contact.portfolio)}</Text>
           )}
-          {safeText(contact.github) && <Text>{safeText(contact.github)}</Text>}
-          {safeText(contact.location) && (
-            <Text>{safeText(contact.location)}</Text>
-          )}
-          {safeText(contact.twitter) && (
-            <Text>{safeText(contact.twitter)}</Text>
-          )}
         </View>
 
         {/* Summary */}
@@ -83,10 +90,10 @@ export default function ResumePDF({ data }) {
         {sections.education &&
           Array.isArray(data.education) &&
           data.education.length > 0 && (
-            <View style={styles.section} wrap={false}>
+            <View style={styles.section}>
               <Text style={styles.heading}>Education</Text>
               {data.education.map((edu, idx) => (
-                <View key={idx}>
+                <View key={idx} style={styles.tightSection}>
                   {safeText(edu.school) && (
                     <Text style={styles.subheading}>
                       {safeText(edu.school)}
@@ -104,14 +111,22 @@ export default function ResumePDF({ data }) {
             </View>
           )}
 
-        {/* Experience */}
+        {/* Experience - Critical section for spacing */}
         {sections.experience &&
           Array.isArray(data.experience) &&
           data.experience.length > 0 && (
-            <View style={styles.section} wrap={false}>
-              <Text style={styles.heading}>Experience</Text>
+            <View style={styles.tightSection}>
+              <Text style={[styles.heading, { marginBottom: 1 }]}>
+                Experience
+              </Text>
               {data.experience.map((exp, idx) => (
-                <View key={idx}>
+                <View
+                  key={idx}
+                  style={[
+                    styles.tightSection,
+                    idx < data.experience.length - 1 ? { marginBottom: 2 } : {},
+                  ]}
+                >
                   {safeText(exp.company) && (
                     <Text style={styles.subheading}>
                       {safeText(exp.company)}
@@ -126,7 +141,7 @@ export default function ResumePDF({ data }) {
                   )}
                   {safeText(exp.description) && (
                     <Text style={styles.bullet}>
-                      - {safeText(exp.description)}
+                      • {safeText(exp.description)}
                     </Text>
                   )}
                 </View>
@@ -134,13 +149,11 @@ export default function ResumePDF({ data }) {
             </View>
           )}
 
-        <View break />
-
-        {/* Skills */}
+        {/* Skills - Right after Experience with minimal gap */}
         {sections.skills &&
           Array.isArray(data.skills) &&
           data.skills.length > 0 && (
-            <View style={styles.section} wrap={false}>
+            <View style={[styles.section, { marginTop: 1 }]}>
               <Text style={styles.heading}>Skills</Text>
               <Text>{data.skills.map(safeText).join(", ")}</Text>
             </View>
@@ -150,17 +163,25 @@ export default function ResumePDF({ data }) {
         {sections.projects &&
           Array.isArray(data.projects) &&
           data.projects.length > 0 && (
-            <View style={styles.section} wrap={false}>
+            <View style={styles.section}>
               <Text style={styles.heading}>Projects</Text>
               {data.projects.map((proj, idx) => (
-                <View key={idx}>
+                <View
+                  key={idx}
+                  style={[
+                    styles.tightSection,
+                    idx < data.projects.length - 1 ? { marginBottom: 2 } : {},
+                  ]}
+                >
                   {safeText(proj.title) && (
                     <Text style={styles.subheading}>
                       {safeText(proj.title)}
                     </Text>
                   )}
                   {safeText(proj.description) && (
-                    <Text>{safeText(proj.description)}</Text>
+                    <Text style={styles.bullet}>
+                      • {safeText(proj.description)}
+                    </Text>
                   )}
                   {safeText(proj.link) && (
                     <Text style={styles.italic}>{safeText(proj.link)}</Text>
@@ -174,10 +195,10 @@ export default function ResumePDF({ data }) {
         {sections.certificates &&
           Array.isArray(data.certificates) &&
           data.certificates.length > 0 && (
-            <View style={styles.section} wrap={false}>
+            <View style={styles.section}>
               <Text style={styles.heading}>Certificates</Text>
               {data.certificates.map((cert, idx) => (
-                <View key={idx}>
+                <View key={idx} style={styles.tightSection}>
                   {safeText(cert.title) && (
                     <Text style={styles.subheading}>
                       {safeText(cert.title)}
@@ -197,11 +218,13 @@ export default function ResumePDF({ data }) {
 
         {/* Custom Sections */}
         {customSections.map((section, idx) => (
-          <View key={idx} style={styles.section} wrap={false}>
+          <View key={idx} style={styles.section}>
             <Text style={styles.heading}>{safeText(section.title)}</Text>
             {Array.isArray(section.items) &&
               section.items.map((item, i) => (
-                <Text key={i}>• {safeText(item)}</Text>
+                <Text key={i} style={styles.bullet}>
+                  • {safeText(item)}
+                </Text>
               ))}
           </View>
         ))}
