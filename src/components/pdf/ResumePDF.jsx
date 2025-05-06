@@ -164,6 +164,7 @@ export default function ResumePDF({ data }) {
                   {isNonEmptyText(exp.company) && (
                     <Text style={styles.subheading}>{exp.company.trim()}</Text>
                   )}
+
                   {[exp.role, exp.duration].filter(isNonEmptyText).length >
                     0 && (
                     <Text>
@@ -173,11 +174,14 @@ export default function ResumePDF({ data }) {
                         .join(" · ")}
                     </Text>
                   )}
-                  +{" "}
+
                   {isNonEmptyText(exp.description) && (
                     <Text style={styles.bullet}>
                       •{" "}
-                      {parseHTMLString(exp.description).map((part, i) => (
+                      {parseHTMLString(
+                        // Trim and remove any leading dash or hyphen + space
+                        exp.description.trim().replace(/^[\-\–\—]\s*/, "")
+                      ).map((part, i) => (
                         <Text
                           key={i}
                           style={part.bold ? styles.bold : undefined}
@@ -191,7 +195,6 @@ export default function ResumePDF({ data }) {
               ))}
             </View>
           )}
-
         {/* Skills */}
         {sections.skills &&
           Array.isArray(data.skills) &&
