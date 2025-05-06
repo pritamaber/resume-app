@@ -7,30 +7,42 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method Not Allowed" });
   }
 
-  const { type, input, context } = req.body;
+  const { type, input, context = {} } = req.body;
 
-  if (!type || !input) {
-    return res.status(400).json({ error: "Missing type or input" });
+  if (!type || typeof input !== "string" || input.trim().length === 0) {
+    return res.status(400).json({ error: "Missing or invalid type/input" });
   }
 
-  // Smart prompt routing
   let prompt = "";
 
   switch (type) {
     case "summary":
-      prompt = `Improve the following resume summary and make it more professional and ATS-friendly:\n\n"${input}"`;
+      prompt = `Improve the following resume summary to make it professional, concise, and ATS-friendly:\n\n${input.trim()}`;
       break;
+
     case "experience":
-      prompt = `Rewrite the following work experience bullet point to be more impactful, using action verbs and measurable results:\n\n"${input}"`;
+      prompt = `Rewrite the following work experience bullet point to be more impactful, using action verbs and measurable outcomes. Keep it one to two lines max:\n\n${input.trim()}`;
       break;
+
     case "project":
-      prompt = `Rewrite this project description to highlight impact, tools, and results for a resume:\n\n"${input}"`;
+      prompt = `
+Please rewrite the following project description to be professional, concise, and optimized for a tech resume.
+Wrap important technologies, results, or metrics in **bold** markdown formatting.
+Use action verbs and keep it one paragraph max.
+
+Project description:
+${input.trim()}
+`.trim();
       break;
+
     case "skills":
-      prompt = `Based on the following candidate profile, suggest 8–10 relevant technical and soft skills:\n\n"${input}"\n\nContext:\n${JSON.stringify(
-        context
-      )}`;
+      prompt = `The user has described their background as:
+"${input.trim()}"
+
+Based on this, suggest 8–10 modern, relevant technical and soft skills. Return only a comma-separated list. Context:
+${JSON.stringify(context)}`;
       break;
+
     default:
       return res.status(400).json({ error: "Unsupported type" });
   }
@@ -39,14 +51,21 @@ export default async function handler(req, res) {
     const completion = await openai.chat.completions.create({
       model: "gpt-4-turbo",
       messages: [{ role: "user", content: prompt }],
-      temperature: 0.7,
+      temperature: 0.6,
     });
 
-    const output = completion.choices[0].message.content;
+    let output = completion.choices?.[0]?.message?.content?.trim();
+    if (!output) throw new Error("Empty response from OpenAI");
 
-    res.status(200).json({ output });
-  } catch (error) {
-    console.error("OpenAI error:", error.message);
-    res.status(500).json({ error: "Failed to generate output" });
+    // Convert markdown **bold** to HTML <strong> with extra weight
+    const htmlOutput = output.replace(
+      /\*\*(.*?)\*\*/g,
+      '<strong class="font-extrabold">$1</strong>'
+    );
+
+    res.status(200).json({ output: htmlOutput });
+  } catch (err) {
+    console.error("AI Enhancer Error:", err);
+    res.status(500).json({ error: "AI generation failed. Try again." });
   }
 }

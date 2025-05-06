@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { useResumeData } from "../../hooks/useResumeData";
 
 export default function ExperienceStep() {
   const { resumeData, updateSection } = useResumeData();
+  const [loadingIndex, setLoadingIndex] = useState(null);
 
   const handleChange = (index, field, value) => {
     const updated = [...resumeData.experience];
@@ -19,6 +21,32 @@ export default function ExperienceStep() {
   const removeEntry = (index) => {
     const updated = resumeData.experience.filter((_, i) => i !== index);
     updateSection("experience", updated);
+  };
+
+  const enhanceDescription = async (index) => {
+    try {
+      setLoadingIndex(index);
+      const entry = resumeData.experience[index];
+      const response = await fetch("/api/ai-enhancer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "experience",
+          input: `Role: ${entry.role}, Company: ${entry.company}, Description: ${entry.description}`,
+        }),
+      });
+      const result = await response.json();
+      if (result.output) {
+        handleChange(index, "description", result.output);
+      } else {
+        alert("AI enhancement failed.");
+      }
+    } catch (err) {
+      console.error("AI enhance error:", err);
+      alert("Something went wrong while enhancing experience.");
+    } finally {
+      setLoadingIndex(null);
+    }
   };
 
   return (
@@ -65,13 +93,12 @@ export default function ExperienceStep() {
             />
             <button
               type="button"
-              onClick={() =>
-                alert("💡 Smart Suggestion for Experience coming soon")
-              }
+              onClick={() => enhanceDescription(index)}
+              disabled={loadingIndex === index}
               className="absolute right-2 top-2 text-yellow-500 hover:text-yellow-600"
               title="Get AI suggestion"
             >
-              💡
+              {loadingIndex === index ? "⏳" : "💡"}
             </button>
           </div>
 

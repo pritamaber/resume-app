@@ -21,9 +21,25 @@ export default function ProjectsStep() {
     updateSection("projects", updated);
   };
 
-  const handlePolishClick = (index) => {
-    alert(`💡 Smart polish coming soon for project #${index + 1}`);
-    // Later: call polishText(project.description)
+  const handlePolishClick = async (index) => {
+    const project = resumeData.projects[index];
+    if (!project.description?.trim()) return;
+
+    setLoadingIndex(index);
+    try {
+      const res = await fetch("/api/ai-enhancer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "project", input: project.description }),
+      });
+      const { output } = await res.json();
+      handleChange(index, "description", output);
+    } catch (err) {
+      console.error("Polish error", err);
+      // You may show a toast notification here
+    } finally {
+      setLoadingIndex(null);
+    }
   };
 
   return (

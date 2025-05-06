@@ -4,6 +4,8 @@ import { useResumeData } from "../../hooks/useResumeData";
 export default function SkillsStep() {
   const { resumeData, updateSection } = useResumeData();
   const [input, setInput] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const addSkill = () => {
     const skill = input.trim();
@@ -14,8 +16,16 @@ export default function SkillsStep() {
   };
 
   const removeSkill = (skillToRemove) => {
-    const updatedSkills = resumeData.skills.filter((s) => s !== skillToRemove);
-    updateSection("skills", updatedSkills);
+    const updated = resumeData.skills.filter((s) => s !== skillToRemove);
+    updateSection("skills", updated);
+  };
+
+  const toggleSuggestedSkill = (skill) => {
+    if (resumeData.skills.includes(skill)) {
+      removeSkill(skill);
+    } else {
+      updateSection("skills", [...resumeData.skills, skill]);
+    }
   };
 
   const handleKeyDown = (e) => {
@@ -25,9 +35,34 @@ export default function SkillsStep() {
     }
   };
 
-  const handleSmartSuggest = () => {
-    alert("💡 Smart Skill Suggestions coming soon!");
-    // Later: connect to Appwrite function and update skills
+  const handleSmartSuggest = async () => {
+    const context = `${resumeData.summary || ""}\n${resumeData.experience
+      .map((e) => e.description)
+      .join("\n")}`;
+
+    const input =
+      "Based on this candidate's profile, suggest 8 professional skills. Return only a comma-separated list, no explanation.";
+
+    try {
+      setLoading(true);
+      const res = await fetch("/api/ai-enhancer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "skills", input, context }),
+      });
+
+      const { output } = await res.json();
+      const parsed = output
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+
+      setSuggestions(parsed);
+    } catch (err) {
+      alert("❌ Skill suggestion failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -52,12 +87,40 @@ export default function SkillsStep() {
         <button
           title="Suggest Skills (AI)"
           onClick={handleSmartSuggest}
+          disabled={loading}
           className="absolute -right-10 top-1 text-yellow-500 hover:text-yellow-600 text-xl"
         >
           💡
         </button>
       </div>
 
+      {/* Suggested AI Skills */}
+      {suggestions.length > 0 && (
+        <div className="mb-4">
+          <h4 className="text-sm text-gray-500 mb-1">💡 AI Suggestions:</h4>
+          <div className="flex flex-wrap gap-2">
+            {suggestions.map((skill, i) => {
+              const alreadyAdded = resumeData.skills.includes(skill);
+              return (
+                <button
+                  key={i}
+                  onClick={() => toggleSuggestedSkill(skill)}
+                  className={`px-3 py-1 rounded-full text-sm border ${
+                    alreadyAdded
+                      ? "bg-green-100 text-green-700 border-green-400"
+                      : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-indigo-100 hover:border-indigo-400"
+                  }`}
+                >
+                  {alreadyAdded ? "✓ " : ""}
+                  {skill}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Existing Skills */}
       <div className="flex flex-wrap gap-2">
         {resumeData.skills.map((skill, index) => (
           <span
