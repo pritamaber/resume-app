@@ -1,1 +1,5 @@
+:root {
+  --tw-color-primary: #6366f1; /* Indigo-500 fallback */
+  --tw-bg-opacity: 1;
+}
 @import "tailwindcss";

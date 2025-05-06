@@ -9,7 +9,11 @@ import ProjectsStep from "../components/steps/ProjectsStep";
 import CertificatesStep from "../components/steps/CertificatesStep";
 import ReviewStep from "../components/steps/ReviewStep";
 
+import { useDummyResumeData } from "../hooks/useDummyResumeData";
+
 export default function ResumeBuilder() {
+  useDummyResumeData();
+
   const [currentStep, setCurrentStep] = useState(0);
 
   const steps = [
@@ -54,12 +58,7 @@ export default function ResumeBuilder() {
               Next
             </button>
           ) : (
-            <button
-              className="bg-teal-500 text-white py-2 px-4 rounded hover:bg-teal-600 transition"
-              onClick={() => alert("Ready to generate PDF!")}
-            >
-              Generate Resume
-            </button>
+            <></> // Nothing — user will click download inside ReviewStep
           )}
         </div>
       </div>

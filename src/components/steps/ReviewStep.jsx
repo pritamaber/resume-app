@@ -1,5 +1,6 @@
 import { useRef } from "react";
-import html2canvas from "html2canvas";
+// import html2canvas from "html2canvas";
+import html2canvas from "html2canvas-pro";
 import jsPDF from "jspdf";
 import { useResumeData } from "../../hooks/useResumeData";
 
@@ -30,7 +31,7 @@ export default function ReviewStep() {
           onClick={downloadPDF}
           className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition"
         >
-          Download PDF
+          📄 Download Resume (PDF)
         </button>
       </div>
 
