@@ -9,6 +9,10 @@ export const ResumeProvider = ({ children }) => {
       email: "",
       phone: "",
       linkedin: "",
+      portfolio: "",
+      github: "",
+      location: "",
+      twitter: "",
     },
     summary: "",
     education: [],
@@ -16,6 +20,14 @@ export const ResumeProvider = ({ children }) => {
     skills: [],
     projects: [],
     certificates: [],
+    sections: {
+      summary: true,
+      education: true,
+      experience: true,
+      skills: true,
+      projects: true,
+      certificates: true,
+    },
   });
 
   const updateSection = (section, value) => {

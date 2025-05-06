@@ -8,6 +8,7 @@ import SkillsStep from "../components/steps/SkillsStep";
 import ProjectsStep from "../components/steps/ProjectsStep";
 import CertificatesStep from "../components/steps/CertificatesStep";
 import ReviewStep from "../components/steps/ReviewStep";
+import SectionSelector from "../components/common/SectionSelector";
 
 import { useDummyResumeData } from "../hooks/useDummyResumeData";
 
@@ -37,6 +38,7 @@ export default function ResumeBuilder() {
 
   return (
     <div className="max-w-4xl mx-auto my-10 px-4">
+      <SectionSelector />
       <StepIndicator currentStep={currentStep} setStep={setCurrentStep} />
       <div className="bg-white shadow-lg rounded-xl mt-6 p-6">
         {steps[currentStep].component}
