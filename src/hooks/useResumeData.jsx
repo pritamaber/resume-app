@@ -20,6 +20,7 @@ export const ResumeProvider = ({ children }) => {
     skills: [],
     projects: [],
     certificates: [],
+    customSections: [], // ✅ added here
     sections: {
       summary: true,
       education: true,

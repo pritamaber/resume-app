@@ -22,33 +22,60 @@ const styles = StyleSheet.create({
   bullet: { marginLeft: 10, marginBottom: 2 },
 });
 
-export default function ResumePDF({ data }) {
-  const sections = data.sections || {};
-  const contact = data.contact || {};
+const safeText = (value) =>
+  typeof value === "string" || typeof value === "number" ? String(value) : "";
 
-  const renderLine = (label) => (label ? <Text>{label}</Text> : null);
+export default function ResumePDF({ data }) {
+  const sections = {
+    summary: false,
+    education: false,
+    experience: false,
+    skills: false,
+    projects: false,
+    certificates: false,
+    ...data.sections,
+  };
+
+  const contact = data.contact || {};
+  const customSections = Array.isArray(data.customSections)
+    ? data.customSections
+    : [];
 
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        {/* Contact Section */}
+        {/* Contact */}
         <View style={styles.section}>
-          {renderLine(contact.name)}
-          {renderLine(
-            [contact.email, contact.phone].filter(Boolean).join(" | ")
+          {safeText(contact.name) && (
+            <Text style={styles.subheading}>{safeText(contact.name)}</Text>
           )}
-          {renderLine(contact.linkedin)}
-          {renderLine(contact.portfolio)}
-          {renderLine(contact.github)}
-          {renderLine(contact.location)}
-          {renderLine(contact.twitter)}
+          {[contact.email, contact.phone].filter(Boolean).length > 0 && (
+            <Text>
+              {[safeText(contact.email), safeText(contact.phone)]
+                .filter(Boolean)
+                .join(" | ")}
+            </Text>
+          )}
+          {safeText(contact.linkedin) && (
+            <Text>{safeText(contact.linkedin)}</Text>
+          )}
+          {safeText(contact.portfolio) && (
+            <Text>{safeText(contact.portfolio)}</Text>
+          )}
+          {safeText(contact.github) && <Text>{safeText(contact.github)}</Text>}
+          {safeText(contact.location) && (
+            <Text>{safeText(contact.location)}</Text>
+          )}
+          {safeText(contact.twitter) && (
+            <Text>{safeText(contact.twitter)}</Text>
+          )}
         </View>
 
         {/* Summary */}
-        {sections.summary && data.summary && (
+        {sections.summary && safeText(data.summary) && (
           <View style={styles.section}>
             <Text style={styles.heading}>Summary</Text>
-            <Text>{data.summary}</Text>
+            <Text>{safeText(data.summary)}</Text>
           </View>
         )}
 
@@ -60,9 +87,17 @@ export default function ResumePDF({ data }) {
               <Text style={styles.heading}>Education</Text>
               {data.education.map((edu, idx) => (
                 <View key={idx}>
-                  {renderLine(edu.school)}
-                  {renderLine(
-                    [edu.degree, edu.year].filter(Boolean).join(" · ")
+                  {safeText(edu.school) && (
+                    <Text style={styles.subheading}>
+                      {safeText(edu.school)}
+                    </Text>
+                  )}
+                  {[edu.degree, edu.year].filter(Boolean).length > 0 && (
+                    <Text>
+                      {[safeText(edu.degree), safeText(edu.year)]
+                        .filter(Boolean)
+                        .join(" · ")}
+                    </Text>
                   )}
                 </View>
               ))}
@@ -77,11 +112,23 @@ export default function ResumePDF({ data }) {
               <Text style={styles.heading}>Experience</Text>
               {data.experience.map((exp, idx) => (
                 <View key={idx}>
-                  {renderLine(exp.company)}
-                  {renderLine(
-                    [exp.role, exp.duration].filter(Boolean).join(" · ")
+                  {safeText(exp.company) && (
+                    <Text style={styles.subheading}>
+                      {safeText(exp.company)}
+                    </Text>
                   )}
-                  {renderLine(exp.description ? `- ${exp.description}` : "")}
+                  {[exp.role, exp.duration].filter(Boolean).length > 0 && (
+                    <Text>
+                      {[safeText(exp.role), safeText(exp.duration)]
+                        .filter(Boolean)
+                        .join(" · ")}
+                    </Text>
+                  )}
+                  {safeText(exp.description) && (
+                    <Text style={styles.bullet}>
+                      - {safeText(exp.description)}
+                    </Text>
+                  )}
                 </View>
               ))}
             </View>
@@ -95,7 +142,7 @@ export default function ResumePDF({ data }) {
           data.skills.length > 0 && (
             <View style={styles.section} wrap={false}>
               <Text style={styles.heading}>Skills</Text>
-              <Text>{data.skills.join(", ")}</Text>
+              <Text>{data.skills.map(safeText).join(", ")}</Text>
             </View>
           )}
 
@@ -107,9 +154,17 @@ export default function ResumePDF({ data }) {
               <Text style={styles.heading}>Projects</Text>
               {data.projects.map((proj, idx) => (
                 <View key={idx}>
-                  {renderLine(proj.title)}
-                  {renderLine(proj.description)}
-                  {renderLine(proj.link)}
+                  {safeText(proj.title) && (
+                    <Text style={styles.subheading}>
+                      {safeText(proj.title)}
+                    </Text>
+                  )}
+                  {safeText(proj.description) && (
+                    <Text>{safeText(proj.description)}</Text>
+                  )}
+                  {safeText(proj.link) && (
+                    <Text style={styles.italic}>{safeText(proj.link)}</Text>
+                  )}
                 </View>
               ))}
             </View>
@@ -123,14 +178,33 @@ export default function ResumePDF({ data }) {
               <Text style={styles.heading}>Certificates</Text>
               {data.certificates.map((cert, idx) => (
                 <View key={idx}>
-                  {renderLine(cert.title)}
-                  {renderLine(
-                    [cert.issuer, cert.year].filter(Boolean).join(" · ")
+                  {safeText(cert.title) && (
+                    <Text style={styles.subheading}>
+                      {safeText(cert.title)}
+                    </Text>
+                  )}
+                  {[cert.issuer, cert.year].filter(Boolean).length > 0 && (
+                    <Text>
+                      {[safeText(cert.issuer), safeText(cert.year)]
+                        .filter(Boolean)
+                        .join(" · ")}
+                    </Text>
                   )}
                 </View>
               ))}
             </View>
           )}
+
+        {/* Custom Sections */}
+        {customSections.map((section, idx) => (
+          <View key={idx} style={styles.section} wrap={false}>
+            <Text style={styles.heading}>{safeText(section.title)}</Text>
+            {Array.isArray(section.items) &&
+              section.items.map((item, i) => (
+                <Text key={i}>• {safeText(item)}</Text>
+              ))}
+          </View>
+        ))}
       </Page>
     </Document>
   );
