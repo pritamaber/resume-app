@@ -1,5 +1,12 @@
 import React from "react";
-import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
+import {
+  Document,
+  Page,
+  Text,
+  View,
+  StyleSheet,
+  Link,
+} from "@react-pdf/renderer";
 
 const styles = StyleSheet.create({
   page: {
@@ -23,6 +30,10 @@ const styles = StyleSheet.create({
   bold: { fontWeight: "bold" },
   tightSection: { marginBottom: 0 },
   contactSection: { marginBottom: 6 },
+  link: {
+    color: "#0000EE",
+    textDecoration: "underline",
+  },
 });
 
 const isNonEmptyText = (val) =>
@@ -93,10 +104,14 @@ export default function ResumePDF({ data }) {
             </Text>
           )}
           {isNonEmptyText(contact.linkedin) && (
-            <Text>{contact.linkedin.trim()}</Text>
+            <Link src={contact.linkedin.trim()} style={styles.link} break>
+              {contact.linkedin.trim()}
+            </Link>
           )}
           {isNonEmptyText(contact.portfolio) && (
-            <Text>{contact.portfolio.trim()}</Text>
+            <Link src={contact.portfolio.trim()} style={styles.link} break>
+              {contact.portfolio.trim()}
+            </Link>
           )}
         </View>
 
@@ -214,7 +229,9 @@ export default function ResumePDF({ data }) {
                     </Text>
                   )}
                   {isNonEmptyText(proj.link) && (
-                    <Text style={styles.italic}>{proj.link.trim()}</Text>
+                    <Link src={proj.link.trim()} style={styles.link} break>
+                      {proj.link.trim()}
+                    </Link>
                   )}
                 </View>
               ))}
