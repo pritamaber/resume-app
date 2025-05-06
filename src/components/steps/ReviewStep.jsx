@@ -8,15 +8,21 @@ export default function ReviewStep() {
   return (
     <div className="max-w-4xl mx-auto my-10 px-4">
       <div className="mb-4 text-right">
-        <PDFDownloadLink
-          document={<ResumePDF data={resumeData} />}
-          fileName="resume.pdf"
-          className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition"
-        >
-          {({ loading }) =>
-            loading ? "Generating PDF..." : "📄 Download ATS-Friendly Resume"
-          }
-        </PDFDownloadLink>
+        {resumeData && (
+          <PDFDownloadLink
+            document={
+              <ResumePDF
+                data={{ ...resumeData, sections: resumeData.sections || {} }}
+              />
+            }
+            fileName="resume.pdf"
+            className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition"
+          >
+            {({ loading }) =>
+              loading ? "Generating PDF..." : "📄 Download ATS-Friendly Resume"
+            }
+          </PDFDownloadLink>
+        )}
       </div>
 
       <div className="bg-white p-6 shadow-lg text-[13px] leading-tight space-y-4 font-sans">
@@ -27,14 +33,14 @@ export default function ReviewStep() {
           </p>
           {resumeData.contact.linkedin && <p>{resumeData.contact.linkedin}</p>}
           {resumeData.contact.portfolio && (
-            <p> {resumeData.contact.portfolio}</p>
+            <p>{resumeData.contact.portfolio}</p>
           )}
-          {resumeData.contact.github && <p> {resumeData.contact.github}</p>}
-          {resumeData.contact.location && <p> {resumeData.contact.location}</p>}
-          {resumeData.contact.twitter && <p> {resumeData.contact.twitter}</p>}
+          {resumeData.contact.github && <p>{resumeData.contact.github}</p>}
+          {resumeData.contact.location && <p>{resumeData.contact.location}</p>}
+          {resumeData.contact.twitter && <p>{resumeData.contact.twitter}</p>}
         </section>
 
-        {resumeData.summary && (
+        {resumeData.sections.summary && resumeData.summary && (
           <section>
             <h2 className="text-lg font-semibold border-b pb-1 mb-1">
               Summary
@@ -43,7 +49,7 @@ export default function ReviewStep() {
           </section>
         )}
 
-        {resumeData.education.length > 0 && (
+        {resumeData.sections.education && resumeData.education.length > 0 && (
           <section>
             <h2 className="text-lg font-semibold border-b pb-1 mb-1">
               Education
@@ -59,7 +65,7 @@ export default function ReviewStep() {
           </section>
         )}
 
-        {resumeData.experience.length > 0 && (
+        {resumeData.sections.experience && resumeData.experience.length > 0 && (
           <section>
             <h2 className="text-lg font-semibold border-b pb-1 mb-1">
               Experience
@@ -76,14 +82,14 @@ export default function ReviewStep() {
           </section>
         )}
 
-        {resumeData.skills.length > 0 && (
+        {resumeData.sections.skills && resumeData.skills.length > 0 && (
           <section>
             <h2 className="text-lg font-semibold border-b pb-1 mb-1">Skills</h2>
             <p>{resumeData.skills.join(", ")}</p>
           </section>
         )}
 
-        {resumeData.projects.length > 0 && (
+        {resumeData.sections.projects && resumeData.projects.length > 0 && (
           <section>
             <h2 className="text-lg font-semibold border-b pb-1 mb-1">
               Projects
@@ -100,21 +106,22 @@ export default function ReviewStep() {
           </section>
         )}
 
-        {resumeData.certificates.length > 0 && (
-          <section>
-            <h2 className="text-lg font-semibold border-b pb-1 mb-1">
-              Certificates
-            </h2>
-            {resumeData.certificates.map((cert, idx) => (
-              <div key={idx}>
-                <p className="font-medium">{cert.title}</p>
-                <p className="text-sm text-gray-600">
-                  {cert.issuer} — {cert.year}
-                </p>
-              </div>
-            ))}
-          </section>
-        )}
+        {resumeData.sections.certificates &&
+          resumeData.certificates.length > 0 && (
+            <section>
+              <h2 className="text-lg font-semibold border-b pb-1 mb-1">
+                Certificates
+              </h2>
+              {resumeData.certificates.map((cert, idx) => (
+                <div key={idx}>
+                  <p className="font-medium">{cert.title}</p>
+                  <p className="text-sm text-gray-600">
+                    {cert.issuer} — {cert.year}
+                  </p>
+                </div>
+              ))}
+            </section>
+          )}
       </div>
     </div>
   );
