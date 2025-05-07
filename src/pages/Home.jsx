@@ -3,7 +3,7 @@ import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 
 import { AuthContext } from "../contexts/AuthContext";
-import LogoutButton from "../components/LogoutButton";
+
 import Illustration from "../assets/resume-illustration.svg";
 
 export default function Home() {
@@ -28,11 +28,10 @@ export default function Home() {
                 >
                   Start Building
                 </Link>
-                <LogoutButton className="px-6 py-3 border border-indigo-600 text-indigo-600 rounded-lg font-medium hover:bg-indigo-700 hover:text-white transition" />
               </>
             ) : (
               <Link
-                to="/login"
+                to="/signup"
                 className="px-6 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition"
               >
                 Get Started
@@ -48,12 +47,6 @@ export default function Home() {
           />
         </section>
       </main>
-
-      <footer className="py-4 bg-white">
-        <div className="text-center text-gray-500 text-sm">
-          &copy; {new Date().getFullYear()} ResumeAI. All rights reserved.
-        </div>
-      </footer>
     </div>
   );
 }
