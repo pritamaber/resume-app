@@ -7,18 +7,32 @@ export const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
 
+  // Called on app load & after OAuth redirects
+  async function checkSession() {
+    try {
+      const session = await account.get();
+      setUser(session);
+    } catch {
+      setUser(null);
+    }
+  }
+
+  // After OAuth redirect from Appwrite, this refreshes session
+  async function handleOAuthRedirect() {
+    await checkSession();
+  }
+
   useEffect(() => {
-    account
-      .get()
-      .then(setUser)
-      .catch(() => setUser(null));
+    checkSession();
   }, []);
 
-  const logout = () =>
-    account.deleteSession("current").then(() => setUser(null));
+  async function logout() {
+    await account.deleteSession("current");
+    setUser(null);
+  }
 
   return (
-    <AuthContext.Provider value={{ user, setUser, logout }}>
+    <AuthContext.Provider value={{ user, logout, handleOAuthRedirect }}>
       {children}
     </AuthContext.Provider>
   );
