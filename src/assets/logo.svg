@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 300 60"
+  width="300"
+  height="60"
+  role="img"
+  aria-labelledby="logoTitle logoDesc"
+>
+  <title id="logoTitle">resum.ai Logo</title>
+  <desc id="logoDesc">Wordmark for resum.ai with a purple gradient and bold typography</desc>
+
+  <defs>
+    <!-- Purple gradient for the main text -->
+    <linearGradient id="textGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#9F7AEA"/>
+      <stop offset="100%" stop-color="#805AD5"/>
+    </linearGradient>
+  </defs>
+
+  <!-- “rezoom.in” (or replace with “resum.ai” as needed) in purple gradient -->
+  <text
+    x="0"
+    y="45"
+    font-family="Segoe UI, Helvetica, Arial, sans-serif"
+    font-size="48"
+    font-weight="700"
+  >
+    <tspan fill="url(#textGrad)">rezoom.in</tspan>
+  </text>
+</svg>

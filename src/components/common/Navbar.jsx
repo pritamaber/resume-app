@@ -17,11 +17,16 @@ export default function Navbar() {
   return (
     <nav className="bg-white shadow">
       <div className="max-w-7xl mx-auto px-4 flex justify-between h-16">
-        <Link
-          to="/"
-          className="flex items-center text-2xl font-bold text-indigo-600"
-        >
-          ResumeAI
+        <Link to="/" className="flex items-center space-x-2">
+          <img
+            src="/src/assets/logo.svg"
+            alt="resum.ai logo"
+            className="h-8 w-auto"
+          />
+          {/* fallback text if you want
+          <span className="hidden md:inline text-2xl font-bold text-indigo-600">
+            resum.ai
+          </span> */}
         </Link>
 
         {/* Desktop Links */}
