@@ -38,6 +38,7 @@ export default function CertificatesStep() {
         >
           <input
             type="text"
+            name="name"
             placeholder="Certification Name"
             value={cert.name}
             onChange={(e) => handleChange(idx, "name", e.target.value)}
@@ -45,6 +46,7 @@ export default function CertificatesStep() {
           />
           <input
             type="text"
+            name="issuer"
             placeholder="Issuing Organization"
             value={cert.issuer}
             onChange={(e) => handleChange(idx, "issuer", e.target.value)}
@@ -52,6 +54,7 @@ export default function CertificatesStep() {
           />
           <input
             type="text"
+            name="year"
             placeholder="Year"
             value={cert.year}
             onChange={(e) => handleChange(idx, "year", e.target.value)}
@@ -59,6 +62,7 @@ export default function CertificatesStep() {
           />
           <input
             type="url"
+            name="link"
             placeholder="Certificate Link (optional)"
             value={cert.link}
             onChange={(e) => handleChange(idx, "link", e.target.value)}

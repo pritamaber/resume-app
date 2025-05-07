@@ -1,3 +1,4 @@
+// src/hooks/useDummyResumeData.js
 import { useEffect } from "react";
 import { useResumeData } from "./useResumeData";
 
@@ -10,6 +11,10 @@ export const useDummyResumeData = () => {
       email: "aarav.mehta@example.com",
       phone: "+91 9876543210",
       linkedin: "https://linkedin.com/in/aaravmehta",
+      portfolio: "",
+      github: "https://github.com/aaravmehta",
+      location: "",
+      twitter: "",
     });
 
     updateSection(
@@ -73,20 +78,23 @@ export const useDummyResumeData = () => {
       },
     ]);
 
+    // Updated key for certifications
     updateSection("certifications", [
       {
-        title: "Full Stack Web Development",
+        name: "Full Stack Web Development",
         issuer: "freeCodeCamp",
         year: "2023",
+        link: "",
       },
       {
-        title: "AWS Cloud Practitioner",
+        name: "AWS Cloud Practitioner",
         issuer: "Amazon Web Services",
         year: "2022",
+        link: "",
       },
     ]);
 
-    // ✅ Add custom sections here
+    // Custom sections
     updateSection("customSections", [
       {
         title: "Languages",

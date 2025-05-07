@@ -1,3 +1,4 @@
+// src/components/pdf/ResumePDF.jsx
 import React from "react";
 import {
   Document,
@@ -16,47 +17,40 @@ const styles = StyleSheet.create({
     lineHeight: 1.3,
     color: "#000",
   },
-  section: { marginBottom: 4 },
+  section: { marginBottom: 8 },
   heading: {
     fontSize: 14,
-    marginBottom: 2,
+    marginBottom: 4,
     fontWeight: "bold",
     borderBottom: "1 solid #000",
-    paddingBottom: 1,
+    paddingBottom: 2,
   },
-  subheading: { fontSize: 12, fontWeight: "bold", marginBottom: 1 },
+  subheading: { fontSize: 12, fontWeight: "bold", marginBottom: 2 },
   italic: { fontStyle: "italic" },
-  bullet: { marginLeft: 8, marginBottom: 1 },
+  bullet: { marginLeft: 8, marginBottom: 2 },
   bold: { fontWeight: "bold" },
   tightSection: { marginBottom: 0 },
-  contactSection: { marginBottom: 6 },
-  link: {
-    color: "#0000EE",
-    textDecoration: "underline",
-  },
+  contactSection: { marginBottom: 12 },
+  link: { color: "#0000EE", textDecoration: "underline" },
 });
 
 const isNonEmptyText = (val) =>
   typeof val === "string" && val.trim().length > 0;
 
-// Utility to parse <strong> tags into text segments for bold styling
-const parseHTMLString = (htmlString) => {
+const parseHTMLString = (html) => {
   const segments = [];
   let lastIndex = 0;
-  const tagRegex = /<strong[^>]*>(.*?)<\/strong>/g;
+  const regex = /<strong[^>]*>(.*?)<\/strong>/g;
   let match;
-  while ((match = tagRegex.exec(htmlString)) !== null) {
+  while ((match = regex.exec(html)) !== null) {
     if (match.index > lastIndex) {
-      segments.push({
-        text: htmlString.slice(lastIndex, match.index),
-        bold: false,
-      });
+      segments.push({ text: html.slice(lastIndex, match.index), bold: false });
     }
     segments.push({ text: match[1], bold: true });
     lastIndex = match.index + match[0].length;
   }
-  if (lastIndex < htmlString.length) {
-    segments.push({ text: htmlString.slice(lastIndex), bold: false });
+  if (lastIndex < html.length) {
+    segments.push({ text: html.slice(lastIndex), bold: false });
   }
   return segments;
 };
@@ -72,17 +66,15 @@ export default function ResumePDF({ data }) {
     );
   }
 
-  const sections = {
-    summary: false,
-    education: false,
-    experience: false,
-    skills: false,
-    projects: false,
-    certificates: false,
-    ...data.sections,
-  };
-
   const contact = data.contact || {};
+  const summary = data.summary || "";
+  const education = Array.isArray(data.education) ? data.education : [];
+  const experience = Array.isArray(data.experience) ? data.experience : [];
+  const skills = Array.isArray(data.skills) ? data.skills : [];
+  const projects = Array.isArray(data.projects) ? data.projects : [];
+  const certifications = Array.isArray(data.certifications)
+    ? data.certifications
+    : [];
   const customSections = Array.isArray(data.customSections)
     ? data.customSections
     : [];
@@ -99,197 +91,185 @@ export default function ResumePDF({ data }) {
             <Text>
               {[contact.email, contact.phone]
                 .filter(isNonEmptyText)
-                .map((val) => val.trim())
                 .join(" | ")}
             </Text>
           )}
           {isNonEmptyText(contact.linkedin) && (
-            <Link src={contact.linkedin.trim()} style={styles.link} break>
+            <Link src={contact.linkedin.trim()} style={styles.link}>
               {contact.linkedin.trim()}
             </Link>
           )}
           {isNonEmptyText(contact.portfolio) && (
-            <Link src={contact.portfolio.trim()} style={styles.link} break>
+            <Link src={contact.portfolio.trim()} style={styles.link}>
               {contact.portfolio.trim()}
             </Link>
           )}
         </View>
 
         {/* Summary */}
-        {sections.summary && isNonEmptyText(data.summary) && (
+        {isNonEmptyText(summary) && (
           <View style={styles.section}>
             <Text style={styles.heading}>Summary</Text>
-            <Text>{data.summary.trim()}</Text>
+            <Text>{summary.trim()}</Text>
           </View>
         )}
 
         {/* Education */}
-        {sections.education &&
-          Array.isArray(data.education) &&
-          data.education.length > 0 && (
-            <View style={styles.section}>
-              <Text style={styles.heading}>Education</Text>
-              {data.education.map((edu, idx) => (
-                <View key={idx} style={styles.tightSection}>
-                  {isNonEmptyText(edu.school) && (
-                    <Text style={styles.subheading}>{edu.school.trim()}</Text>
-                  )}
-                  {[edu.degree, edu.year].filter(isNonEmptyText).length > 0 && (
-                    <Text>
-                      {[edu.degree, edu.year]
-                        .filter(isNonEmptyText)
-                        .map((val) => val.trim())
-                        .join(" · ")}
-                    </Text>
-                  )}
-                </View>
-              ))}
-            </View>
-          )}
+        {education.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.heading}>Education</Text>
+            {education.map((edu, i) => (
+              <View key={i} style={styles.tightSection}>
+                {isNonEmptyText(edu.school) && (
+                  <Text style={styles.subheading}>{edu.school.trim()}</Text>
+                )}
+                {[edu.degree, edu.year].filter(isNonEmptyText).join(" · ") && (
+                  <Text>
+                    {[edu.degree, edu.year]
+                      .filter(isNonEmptyText)
+                      .map((v) => v.trim())
+                      .join(" · ")}
+                  </Text>
+                )}
+              </View>
+            ))}
+          </View>
+        )}
 
         {/* Experience */}
-        {sections.experience &&
-          Array.isArray(data.experience) &&
-          data.experience.length > 0 && (
-            <View style={styles.section}>
-              <Text style={styles.heading}>Experience</Text>
-              {data.experience.map((exp, idx) => (
-                <View
-                  key={idx}
-                  style={[
-                    styles.tightSection,
-                    idx < data.experience.length - 1 ? { marginBottom: 2 } : {},
-                  ]}
-                >
-                  {isNonEmptyText(exp.company) && (
-                    <Text style={styles.subheading}>{exp.company.trim()}</Text>
-                  )}
-
-                  {[exp.role, exp.duration].filter(isNonEmptyText).length >
-                    0 && (
-                    <Text>
-                      {[exp.role, exp.duration]
-                        .filter(isNonEmptyText)
-                        .map((val) => val.trim())
-                        .join(" · ")}
-                    </Text>
-                  )}
-
-                  {isNonEmptyText(exp.description) && (
-                    <Text style={styles.bullet}>
-                      •{" "}
-                      {parseHTMLString(
-                        // Trim and remove any leading dash or hyphen + space
-                        exp.description.trim().replace(/^[\-\–\—]\s*/, "")
-                      ).map((part, i) => (
-                        <Text
-                          key={i}
-                          style={part.bold ? styles.bold : undefined}
-                        >
+        {experience.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.heading}>Experience</Text>
+            {experience.map((exp, i) => (
+              <View
+                key={i}
+                style={[
+                  styles.tightSection,
+                  i < experience.length - 1 ? { marginBottom: 2 } : {},
+                ]}
+              >
+                {isNonEmptyText(exp.company) && (
+                  <Text style={styles.subheading}>{exp.company.trim()}</Text>
+                )}
+                {[exp.role, exp.duration]
+                  .filter(isNonEmptyText)
+                  .join(" · ") && (
+                  <Text>
+                    {[exp.role, exp.duration]
+                      .filter(isNonEmptyText)
+                      .map((v) => v.trim())
+                      .join(" · ")}
+                  </Text>
+                )}
+                {isNonEmptyText(exp.description) && (
+                  <Text style={styles.bullet}>
+                    •
+                    {parseHTMLString(exp.description.trim()).map(
+                      (part, idx) => (
+                        <Text key={idx} style={part.bold ? styles.bold : {}}>
                           {part.text}
                         </Text>
-                      ))}
-                    </Text>
-                  )}
-                </View>
-              ))}
-            </View>
-          )}
+                      )
+                    )}
+                  </Text>
+                )}
+              </View>
+            ))}
+          </View>
+        )}
+
         {/* Skills */}
-        {sections.skills &&
-          Array.isArray(data.skills) &&
-          data.skills.some(isNonEmptyText) && (
-            <View style={styles.section}>
-              <Text style={styles.heading}>Skills</Text>
-              <Text>
-                {data.skills
-                  .filter(isNonEmptyText)
-                  .map((val) => val.trim())
-                  .join(", ")}
-              </Text>
-            </View>
-          )}
+        {skills.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.heading}>Skills</Text>
+            <Text>{skills.filter(isNonEmptyText).join(", ")}</Text>
+          </View>
+        )}
 
         {/* Projects */}
-        {sections.projects &&
-          Array.isArray(data.projects) &&
-          data.projects.length > 0 && (
-            <View style={styles.section}>
-              <Text style={styles.heading}>Projects</Text>
-              {data.projects.map((proj, idx) => (
-                <View
-                  key={idx}
-                  style={[
-                    styles.tightSection,
-                    idx < data.projects.length - 1 ? { marginBottom: 2 } : {},
-                  ]}
-                >
-                  {isNonEmptyText(proj.title) && (
-                    <Text style={styles.subheading}>{proj.title.trim()}</Text>
-                  )}
-                  {isNonEmptyText(proj.description) && (
-                    <Text style={styles.bullet}>
-                      •{" "}
-                      {parseHTMLString(proj.description).map((part, i) => (
-                        <Text
-                          key={i}
-                          style={part.bold ? styles.bold : undefined}
-                        >
+        {projects.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.heading}>Projects</Text>
+            {projects.map((proj, i) => (
+              <View
+                key={i}
+                style={[
+                  styles.tightSection,
+                  i < projects.length - 1 ? { marginBottom: 2 } : {},
+                ]}
+              >
+                {isNonEmptyText(proj.title) && (
+                  <Text style={styles.subheading}>{proj.title.trim()}</Text>
+                )}
+                {isNonEmptyText(proj.description) && (
+                  <Text style={styles.bullet}>
+                    •
+                    {parseHTMLString(proj.description.trim()).map(
+                      (part, idx) => (
+                        <Text key={idx} style={part.bold ? styles.bold : {}}>
                           {part.text}
                         </Text>
-                      ))}
-                    </Text>
-                  )}
-                  {isNonEmptyText(proj.link) && (
-                    <Link src={proj.link.trim()} style={styles.link} break>
-                      {proj.link.trim()}
-                    </Link>
-                  )}
-                </View>
-              ))}
-            </View>
-          )}
+                      )
+                    )}
+                  </Text>
+                )}
+                {isNonEmptyText(proj.link) && (
+                  <Link src={proj.link.trim()} style={styles.link}>
+                    {proj.link.trim()}
+                  </Link>
+                )}
+              </View>
+            ))}
+          </View>
+        )}
 
-        {/* Certificates */}
-        {sections.certificates &&
-          Array.isArray(data.certificates) &&
-          data.certificates.length > 0 && (
-            <View style={styles.section}>
-              <Text style={styles.heading}>Certificates</Text>
-              {data.certificates.map((cert, idx) => (
-                <View key={idx} style={styles.tightSection}>
-                  {isNonEmptyText(cert.title) && (
-                    <Text style={styles.subheading}>{cert.title.trim()}</Text>
-                  )}
-                  {[cert.issuer, cert.year].filter(isNonEmptyText).length >
-                    0 && (
-                    <Text>
-                      {[cert.issuer, cert.year]
-                        .filter(isNonEmptyText)
-                        .map((val) => val.trim())
-                        .join(" · ")}
-                    </Text>
-                  )}
-                </View>
-              ))}
-            </View>
-          )}
+        {/* Certifications */}
+        {certifications.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.heading}>Certifications</Text>
+            {certifications.map((cert, i) => (
+              <View key={i} style={styles.tightSection}>
+                {isNonEmptyText(cert.name) && (
+                  <Text style={styles.subheading}>{cert.name.trim()}</Text>
+                )}
+                {[cert.issuer, cert.year]
+                  .filter(isNonEmptyText)
+                  .join(" · ") && (
+                  <Text>
+                    {[cert.issuer, cert.year]
+                      .filter(isNonEmptyText)
+                      .map((v) => v.trim())
+                      .join(" · ")}
+                  </Text>
+                )}
+                {isNonEmptyText(cert.link) && (
+                  <Link src={cert.link.trim()} style={styles.link}>
+                    {cert.link.trim()}
+                  </Link>
+                )}
+              </View>
+            ))}
+          </View>
+        )}
 
         {/* Custom Sections */}
-        {Array.isArray(customSections) &&
-          customSections.map((section, idx) => (
-            <View key={idx} style={styles.section}>
-              {isNonEmptyText(section.title) && (
-                <Text style={styles.heading}>{section.title.trim()}</Text>
-              )}
-              {Array.isArray(section.items) &&
-                section.items.filter(isNonEmptyText).map((item, i) => (
-                  <Text key={i} style={styles.bullet}>
-                    • {item.trim()}
-                  </Text>
-                ))}
-            </View>
-          ))}
+        {customSections.length > 0 && (
+          <View style={styles.section}>
+            {customSections.map((section, idx) => (
+              <View key={idx} style={styles.tightSection}>
+                {isNonEmptyText(section.title) && (
+                  <Text style={styles.heading}>{section.title.trim()}</Text>
+                )}
+                {Array.isArray(section.items) &&
+                  section.items.filter(isNonEmptyText).map((item, j) => (
+                    <Text key={j} style={styles.bullet}>
+                      • {item.trim()}
+                    </Text>
+                  ))}
+              </View>
+            ))}
+          </View>
+        )}
       </Page>
     </Document>
   );
