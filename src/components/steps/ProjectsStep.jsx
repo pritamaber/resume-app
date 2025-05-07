@@ -1,14 +1,16 @@
+// src/components/steps/ProjectsStep.jsx
+import React, { useState } from "react";
 import { useResumeData } from "../../hooks/useResumeData";
-import { useState } from "react";
+import { Plus, Trash2, Lightbulb } from "lucide-react";
 
 export default function ProjectsStep() {
   const { resumeData, updateSection } = useResumeData();
-  const [loadingIndex, setLoadingIndex] = useState(null);
+  const [loadingIdx, setLoadingIdx] = useState(null);
 
-  const handleChange = (index, field, value) => {
-    const updated = [...resumeData.projects];
-    updated[index][field] = value;
-    updateSection("projects", updated);
+  const handleChange = (idx, field, value) => {
+    const projects = [...resumeData.projects];
+    projects[idx] = { ...projects[idx], [field]: value };
+    updateSection("projects", projects);
   };
 
   const addProject = () => {
@@ -18,98 +20,87 @@ export default function ProjectsStep() {
     ]);
   };
 
-  const removeProject = (index) => {
-    const updated = resumeData.projects.filter((_, i) => i !== index);
-    updateSection("projects", updated);
+  const removeProject = (idx) => {
+    updateSection(
+      "projects",
+      resumeData.projects.filter((_, i) => i !== idx)
+    );
   };
 
-  const handlePolishClick = async (index) => {
-    const project = resumeData.projects[index];
-    if (!project.description?.trim()) return;
-
-    setLoadingIndex(index);
+  const enhance = async (idx) => {
+    setLoadingIdx(idx);
     try {
       const res = await fetch("/api/ai-enhancer", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: "project", input: project.description }),
+        body: JSON.stringify({
+          type: "project",
+          input: resumeData.projects[idx].description,
+        }),
       });
-      if (!res.ok) throw new Error("Network response was not ok");
-      const { output } = await res.json();
-      handleChange(index, "description", output);
-    } catch (err) {
-      console.error("Polish error", err);
-      // Optionally show a toast notification here
+      const data = await res.json();
+      if (data.output) handleChange(idx, "description", data.output);
+    } catch {
+      // handle error
     } finally {
-      setLoadingIndex(null);
+      setLoadingIdx(null);
     }
   };
 
   return (
-    <div>
-      <h2 className="text-2xl font-semibold text-indigo-600 mb-4">Projects</h2>
-
-      {resumeData.projects.map((project, index) => (
+    <div className="bg-white rounded-lg shadow p-6 space-y-4">
+      <h2 className="text-xl font-semibold text-indigo-600">Projects</h2>
+      {resumeData.projects.map((project, idx) => (
         <div
-          key={index}
-          className="mb-4 p-4 border rounded-lg bg-indigo-50 space-y-2 relative"
+          key={idx}
+          className="relative border border-gray-200 rounded-lg p-4 bg-gray-50 space-y-3"
         >
           <input
             type="text"
             placeholder="Project Title"
             value={project.title}
-            onChange={(e) => handleChange(index, "title", e.target.value)}
-            className="w-full border border-gray-300 rounded p-2"
+            onChange={(e) => handleChange(idx, "title", e.target.value)}
+            className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
           />
-
-          <div className="relative">
-            <textarea
-              rows={3}
-              placeholder="Project Description"
-              value={project.description}
-              onChange={(e) =>
-                handleChange(index, "description", e.target.value)
-              }
-              className="w-full border border-gray-300 rounded p-2 pr-10"
-              disabled={loadingIndex === index}
-            />
-            <button
-              type="button"
-              onClick={() => handlePolishClick(index)}
-              disabled={loadingIndex === index}
-              className={`absolute right-2 top-2 text-2xl leading-none focus:outline-none transition ${
-                loadingIndex === index
-                  ? "text-gray-400"
-                  : "text-yellow-500 hover:text-yellow-600"
-              }`}
-              title="Polish description with AI"
-            >
-              {loadingIndex === index ? "…" : "💡"}
-            </button>
-          </div>
-
+          <textarea
+            rows={3}
+            placeholder="Description"
+            value={project.description}
+            onChange={(e) => handleChange(idx, "description", e.target.value)}
+            className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+          />
           <input
             type="url"
-            placeholder="GitHub or Live Link"
+            placeholder="Project Link (optional)"
             value={project.link}
-            onChange={(e) => handleChange(index, "link", e.target.value)}
-            className="w-full border border-gray-300 rounded p-2"
+            onChange={(e) => handleChange(idx, "link", e.target.value)}
+            className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
           />
 
           <button
-            onClick={() => removeProject(index)}
-            className="absolute top-2 right-2 text-red-500 text-sm hover:underline"
+            onClick={() => enhance(idx)}
+            disabled={loadingIdx === idx}
+            className="absolute top-2 right-2 text-gray-400 hover:text-indigo-600 transition"
+            title="Enhance description with AI"
           >
-            Remove
+            {loadingIdx === idx ? "…" : <Lightbulb />}
+          </button>
+
+          <button
+            onClick={() => removeProject(idx)}
+            className="absolute top-2 right-10 text-red-500 hover:text-red-600 transition"
+            title="Remove project"
+          >
+            <Trash2 />
           </button>
         </div>
       ))}
-
       <button
         onClick={addProject}
-        className="mt-4 bg-teal-500 text-white px-4 py-2 rounded hover:bg-teal-600 transition"
+        className="flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition"
       >
-        Add Project
+        <Plus size={16} />
+        <span>Add Project</span>
       </button>
     </div>
   );

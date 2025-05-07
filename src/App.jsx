@@ -1,13 +1,17 @@
+// 1. Framework
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar";
+// 2. Contexts / Services
+import { AuthProvider } from "./contexts/AuthContext";
+// 3. Layout / Common Components
+import Navbar from "./components/common/Navbar";
+// 4. Helpers / HOCs
+import ProtectedRoute from "./components/ProtectedRoute";
+// 5. Pages
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import OAuthCallback from "./pages/OAuthCallback";
 import ResumeBuilder from "./pages/ResumeBuilder";
-import Review from "./pages/Review";
-import ProtectedRoute from "./components/ProtectedRoute";
-import { AuthProvider } from "./contexts/AuthContext";
 
 export default function App() {
   return (
@@ -29,14 +33,6 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <ResumeBuilder />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/review"
-            element={
-              <ProtectedRoute>
-                <Review />
               </ProtectedRoute>
             }
           />

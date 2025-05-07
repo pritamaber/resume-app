@@ -1,6 +1,7 @@
 // src/pages/OAuthCallback.jsx
 import React, { useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+
 import { AuthContext } from "../contexts/AuthContext";
 
 export default function OAuthCallback() {
@@ -8,19 +9,13 @@ export default function OAuthCallback() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    async function finishLogin() {
-      try {
-        await handleOAuthRedirect();
-        navigate("/build", { replace: true });
-      } catch (err) {
-        console.error("OAuth callback error", err);
-      }
-    }
-    finishLogin();
+    handleOAuthRedirect()
+      .then(() => navigate("/build", { replace: true }))
+      .catch(console.error);
   }, [handleOAuthRedirect, navigate]);
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
+    <div className="min-h-screen flex items-center justify-center">
       <p className="text-gray-600">Finishing login…</p>
     </div>
   );

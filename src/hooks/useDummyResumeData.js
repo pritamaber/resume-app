@@ -73,7 +73,7 @@ export const useDummyResumeData = () => {
       },
     ]);
 
-    updateSection("certificates", [
+    updateSection("certifications", [
       {
         title: "Full Stack Web Development",
         issuer: "freeCodeCamp",
