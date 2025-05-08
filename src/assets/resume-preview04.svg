@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 750" width="500" height="750">
+  <!-- Background -->
+  <rect x="0" y="0" width="500" height="750" fill="#FFFFFF" stroke="#D1D1D1" stroke-width="1" rx="15" ry="15"/>
+
+  <!-- Header with name and title -->
+  <rect x="0" y="0" width="500" height="80" fill="#8E44AD"/>
+  <text x="30" y="50" font-family="Arial, sans-serif" font-size="26" font-weight="bold" fill="white">James Anderson</text>
+  <text x="30" y="75" font-family="Arial, sans-serif" font-size="18" fill="white">Data Scientist</text>
+
+  <!-- Section: Contact Information -->
+  <rect x="20" y="100" width="460" height="100" fill="#ffffff" stroke="#D1D1D1" stroke-width="1" rx="8" ry="8"/>
+  <text x="30" y="130" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#333333">Contact</text>
+  <text x="30" y="150" font-family="Arial, sans-serif" font-size="14" fill="#333333">Email: james.anderson@gmail.com</text>
+  <text x="30" y="170" font-family="Arial, sans-serif" font-size="14" fill="#333333">Phone: (123) 456-7890</text>
+  <text x="30" y="190" font-family="Arial, sans-serif" font-size="14" fill="#333333">LinkedIn: linkedin.com/in/jamesanderson</text>
+
+  <!-- Section: Skills -->
+  <rect x="20" y="230" width="460" height="100" fill="#ffffff" stroke="#D1D1D1" stroke-width="1" rx="8" ry="8"/>
+  <text x="30" y="260" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#333333">Skills</text>
+  <text x="30" y="280" font-family="Arial, sans-serif" font-size="14" fill="#333333">Python, R, SQL, Machine Learning, Data Analysis</text>
+  <text x="30" y="300" font-family="Arial, sans-serif" font-size="14" fill="#333333">Deep Learning, TensorFlow, Keras, Pandas, Scikit-learn</text>
+
+  <!-- Section: Experience -->
+  <rect x="20" y="340" width="460" height="220" fill="#ffffff" stroke="#D1D1D1" stroke-width="1" rx="8" ry="8"/>
+  <text x="30" y="370" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#333333">Experience</text>
+
+  <text x="30" y="390" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#333333">Senior Data Scientist at Data Insights</text>
+  <text x="30" y="410" font-family="Arial, sans-serif" font-size="12" fill="#333333">Jan 2021 - Present</text>
+  <text x="30" y="430" font-family="Arial, sans-serif" font-size="12" fill="#333333">- Led data-driven projects, including predictive analytics.</text>
+  <text x="30" y="450" font-family="Arial, sans-serif" font-size="12" fill="#333333">- Developed machine learning models to optimize business decisions.</text>
+
+  <text x="30" y="470" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#333333">Data Scientist at Tech Innovators</text>
+  <text x="30" y="490" font-family="Arial, sans-serif" font-size="12" fill="#333333">Jun 2018 - Dec 2020</text>
+  <text x="30" y="510" font-family="Arial, sans-serif" font-size="12" fill="#333333">- Designed algorithms for data extraction and transformation .</text>
+  <text x="30" y="530" font-family="Arial, sans-serif" font-size="12" fill="#333333">- Conducted exploratory data analysis (EDA).</text>
+
+  <!-- Section: Projects -->
+  <rect x="20" y="580" width="460" height="120" fill="#ffffff" stroke="#D1D1D1" stroke-width="1" rx="8" ry="8"/>
+  <text x="30" y="610" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#333333">Projects</text>
+  <text x="30" y="630" font-family="Arial, sans-serif" font-size="14" fill="#333333">Predictive Model for Customer Churn (Python, Scikit-learn)</text>
+  <text x="30" y="650" font-family="Arial, sans-serif" font-size="14" fill="#333333">Sales Forecasting with Time Series Analysis (R, ARIMA)</text>
+</svg>
