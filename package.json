@@ -12,6 +12,7 @@
   "dependencies": {
     "@react-pdf/renderer": "^4.3.0",
     "@tailwindcss/vite": "^4.1.5",
+    "aos": "^2.3.4",
     "appwrite": "^17.0.2",
     "html2canvas": "^1.4.1",
     "html2canvas-pro": "^1.5.10",
