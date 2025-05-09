@@ -36,7 +36,7 @@ export default function Navbar() {
                 to={to}
                 className={({ isActive }) =>
                   `text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md transition ${
-                    isActive ? "font-semibold border-b-2 border-indigo-600" : ""
+                    isActive ? "font-semibold border-indigo-600" : ""
                   }`
                 }
               >
